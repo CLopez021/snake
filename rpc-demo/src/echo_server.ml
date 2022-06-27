@@ -3,28 +3,30 @@ open Async
 
 (* [Protocol] defines the communication between the server and the client. *)
 module Protocol : sig
-  (* [Query] defines the type that the client sends to the server. Here, the query
-     contains a string field, [query_message], which the server will echo back. *)
+  (* [Query] defines the type that the client sends to the server. Here, the
+     query contains a string field, [query_message], which the server will
+     echo back. *)
   module Query : sig
     type t = { query_message : string } [@@deriving sexp_of]
 
     val to_string : t -> string
   end
 
-  (* [Response] defines the type that the server sends back to the client. Here, the
-     response contains a string field, [response_message]. *)
+  (* [Response] defines the type that the server sends back to the client.
+     Here, the response contains a string field, [response_message]. *)
   module Response : sig
     type t = { response_message : string } [@@deriving sexp_of]
   end
 
-  (* The [rpc] exposed here can be thought of as the interface between the server and the
-     client. It dictates that clients can send [Query.t]s and receive [Response.t]s. *)
+  (* The [rpc] exposed here can be thought of as the interface between the
+     server and the client. It dictates that clients can send [Query.t]s and
+     receive [Response.t]s. *)
   val rpc : (Query.t, Response.t) Rpc.Rpc.t
 end = struct
   module Query = struct
-    (* Deriving "bin_io" here automatically gives us a way to convert values into a binary
-       protocol, which lets us safely perform the input and output needed to send values
-       between the client and the server. *)
+    (* Deriving "bin_io" here automatically gives us a way to convert values
+       into a binary protocol, which lets us safely perform the input and
+       output needed to send values between the client and the server. *)
     type t = { query_message : string } [@@deriving sexp_of, bin_io]
 
     let to_string { query_message } = query_message
@@ -46,16 +48,20 @@ end
 module Server : sig
   val command : Command.t
 end = struct
-  (* In the server, we have to define implementations for all of the RPCs the server will
-     support. For each RPC, we need to provide a function that takes in the query type
-     specified by the RPC and produces a response type. *)
+  (* In the server, we have to define implementations for all of the RPCs the
+     server will support. For each RPC, we need to provide a function that
+     takes in the query type specified by the RPC and produces a response
+     type. *)
   let handle_query client query =
     Core.print_s
       [%message
-        "Received query" (client : Socket.Address.Inet.t) (query : Protocol.Query.t)];
+        "Received query"
+          (client : Socket.Address.Inet.t)
+          (query : Protocol.Query.t)];
     return
       { Protocol.Response.response_message =
-          [%string "I have received your query! You said: %{query#Protocol.Query}"]
+          [%string
+            "I have received your query! You said: %{query#Protocol.Query}"]
       }
   ;;
 
@@ -78,7 +84,10 @@ end = struct
 
   let main =
     let%map_open.Command port =
-      flag "-port" (required int) ~doc:"INT port that the server should listen on"
+      flag
+        "-port"
+        (required int)
+        ~doc:"INT port that the server should listen on"
     in
     fun () -> serve port
   ;;
@@ -89,18 +98,22 @@ end
 module Client : sig
   val command : Command.t
 end = struct
-  (* In the client, we need to define a way to fire (or dispatch) the RPCs that we care
-     about. This requires knowing how to communicate to the server (by knowing the server
-     address), constructing the query type, and doing something with the response that the
-     server gives back. *)
+  (* In the client, we need to define a way to fire (or dispatch) the RPCs
+     that we care about. This requires knowing how to communicate to the
+     server (by knowing the server address), constructing the query type, and
+     doing something with the response that the server gives back. *)
   let send_message server_addr ~message =
     Rpc.Connection.with_client
       (Tcp.Where_to_connect.of_host_and_port server_addr)
       (fun connection ->
-         let%map.Deferred.Or_error response =
-           Rpc.Rpc.dispatch Protocol.rpc connection { query_message = message }
-         in
-         Core.print_s [%message "Received response" (response : Protocol.Response.t)])
+        let%map.Deferred.Or_error response =
+          Rpc.Rpc.dispatch
+            Protocol.rpc
+            connection
+            { query_message = message }
+        in
+        Core.print_s
+          [%message "Received response" (response : Protocol.Response.t)])
     >>| Result.ok_exn
   ;;
 
@@ -113,13 +126,18 @@ end = struct
            (required host_and_port)
            ~doc:"HOST_AND_PORT server to query (e.g. localhost:1337)"
        and message =
-         flag "-message" (required string) ~doc:"STRING message to send to server"
+         flag
+           "-message"
+           (required string)
+           ~doc:"STRING message to send to server"
        in
        fun () -> send_message server_addr ~message)
   ;;
 
   let command =
-    Command.group ~summary:"rpc client" [ "send-message", send_message_command ]
+    Command.group
+      ~summary:"rpc client"
+      [ "send-message", send_message_command ]
   ;;
 end
 

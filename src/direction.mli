@@ -5,7 +5,12 @@ type t =
   | Up
   | Right
   | Down
-[@@deriving sexp_of]
+  | Left2
+  | Up2
+  | Right2
+  | Down2
+  | Restart
+[@@deriving compare, equal, sexp_of]
 
 (** [next_position] takes a direction and a starting position and returns the
     next position after taking one step in the specified direction. *)

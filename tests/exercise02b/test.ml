@@ -7,7 +7,10 @@ let%expect_test "Exercise 02b" =
   let test key =
     Game.Exercises.exercise02b game key;
     let direction = Snake.direction (Game.snake game) in
-    Stdio.printf !"%c pressed. Snake facing: %{sexp: Direction.t}" key direction
+    Stdio.printf
+      !"%c pressed. Snake facing: %{sexp: Direction.t}"
+      key
+      direction
   in
   test 'w';
   [%expect {| w pressed. Snake facing: Up |}];
