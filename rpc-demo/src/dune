@@ -1,21 +1,14 @@
 ;; -*- scheme -*-
 
 (library
- (name rpc_demo_lib)        
- (libraries           
-  async               
-  base
-  core_unix.command_unix)
- (preprocess (pps ppx_jane)))
+ (name rpc_demo_lib)
+ (libraries async base core_unix.command_unix)
+ (preprocess
+  (pps ppx_jane)))
 
-(env                                
- (dev                               
-  (flags (:standard                 
-          -w -20                    
-          -w -27                    
-          -w -32                    
-          -w -34                    
-          -w -37                    
-          -w -39)))                 
- (release                           
-  (flags (:standard))))             
+(env
+ (dev
+  (flags
+   (:standard -w -20 -w -27 -w -32 -w -34 -w -37 -w -39)))
+ (release
+  (flags (:standard))))

@@ -5,7 +5,10 @@ let test ~head ~tail ~direction =
   let head = Position.of_col_major_coord head in
   let tail = Position.of_col_major_coords tail in
   let new_head, new_tail = Snake.Exercises.exercise01 head tail direction in
-  Stdio.printf !"Head: %{Position}\nTail: %s" new_head (Position.list_to_string new_tail)
+  Stdio.printf
+    !"Head: %{Position}\nTail: %s"
+    new_head
+    (Position.list_to_string new_tail)
 ;;
 
 let%expect_test "move forward (up)" =

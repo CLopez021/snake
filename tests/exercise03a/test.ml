@@ -9,7 +9,8 @@ let%expect_test "Exercise 03a" =
     if Bool.( <> ) in_bounds expectation
     then
       Stdio.printf
-        !"in_bounds for %{sexp:Board.t} %{sexp:Position.t} returned %b unexpectedly"
+        !"in_bounds for %{sexp:Board.t} %{sexp:Position.t} returned %b \
+          unexpectedly"
         board
         position
         in_bounds

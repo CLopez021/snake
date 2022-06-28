@@ -5,7 +5,8 @@ let%expect_test "Exercise 04b" =
   let game = Game.create ~height:10 ~width:10 ~initial_snake_length:3 in
   let test ~direction locations =
     let snake =
-      Snake.Exercises.create_of_locations (Position.of_col_major_coords locations)
+      Snake.Exercises.create_of_locations
+        (Position.of_col_major_coords locations)
     in
     Snake.set_direction snake direction;
     let snake, game_state = Game.Exercises.exercise04b game snake in

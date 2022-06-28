@@ -6,11 +6,15 @@ let width = 10
 
 let test locations =
   let board = Board.create ~height ~width in
-  let locations = List.map locations ~f:(fun (row, col) -> Position.{ row; col }) in
+  let locations =
+    List.map locations ~f:(fun (row, col) -> Position.{ row; col })
+  in
   let snake = Snake.Exercises.create_of_locations locations in
   Stdio.printf
     !"%{sexp: Position.t list}\n%!"
-    (List.sort ~compare:Position.compare (Apple.Exercises.exercise05 ~board ~snake))
+    (List.sort
+       ~compare:Position.compare
+       (Apple.Exercises.exercise05 ~board ~snake))
 ;;
 
 let%expect_test "simple" =
@@ -45,10 +49,12 @@ let%expect_test "simple" =
 ;;
 
 let%expect_test "only one valid location" =
-  let locations = List.cartesian_product (List.range 0 height) (List.range 0 width) in
+  let locations =
+    List.cartesian_product (List.range 0 height) (List.range 0 width)
+  in
   let snake_locations =
     List.filter locations ~f:(fun square ->
-      not ([%compare.equal: int * int] (4, 5) square))
+        not ([%compare.equal: int * int] (4, 5) square))
   in
   test snake_locations;
   [%expect {| (((col 5) (row 4))) |}]

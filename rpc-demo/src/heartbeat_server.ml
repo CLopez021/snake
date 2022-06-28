@@ -3,15 +3,16 @@ open Async
 
 module Protocol : sig
   module Query : sig
-    type t = { frequency_of_heartbeats : Time_ns_unix.Span.t } [@@deriving sexp_of]
+    type t = { frequency_of_heartbeats : Time_ns_unix.Span.t }
+    [@@deriving sexp_of]
   end
 
   module Response = Unit
 
-  (* Unlike the echo server's [rpc], which is of type [Rpc.Rpc.t], this RPC is a
-     [Rpc.Pipe_rpc.t]. For the echo server, a single query from the client will yield a
-     single response from the server. With pipe RPC, the heartbeat server will be able to
-     stream events to the client. *)
+  (* Unlike the echo server's [rpc], which is of type [Rpc.Rpc.t], this RPC
+     is a [Rpc.Pipe_rpc.t]. For the echo server, a single query from the
+     client will yield a single response from the server. With pipe RPC, the
+     heartbeat server will be able to stream events to the client. *)
   val rpc : (Query.t, Response.t, Nothing.t) Rpc.Pipe_rpc.t
 end = struct
   module Query = struct
@@ -35,9 +36,9 @@ end
 module Server : sig
   val command : Command.t
 end = struct
-  (* In the implementation for the heartbeat RPC, we need to construct a pipe reader to
-     return to the client. In contrast, the implementation for the echo server returned a
-     single value. *)
+  (* In the implementation for the heartbeat RPC, we need to construct a pipe
+     reader to return to the client. In contrast, the implementation for the
+     echo server returned a single value. *)
   let handle_query client { Protocol.Query.frequency_of_heartbeats } =
     Core.print_s
       [%message
@@ -46,7 +47,7 @@ end = struct
           (frequency_of_heartbeats : Time_ns_unix.Span.t)];
     let reader, writer = Pipe.create () in
     Clock_ns.every frequency_of_heartbeats (fun () ->
-      Pipe.write_without_pushback_if_open writer ());
+        Pipe.write_without_pushback_if_open writer ());
     return (Ok reader)
   ;;
 
@@ -62,7 +63,9 @@ end = struct
         ~implementations
         ~initial_connection_state:(fun addr conn ->
           upon (Rpc.Connection.close_finished conn) (fun () ->
-            Core.print_s [%message "Client disconnected" (addr : Socket.Address.Inet.t)]);
+              Core.print_s
+                [%message
+                  "Client disconnected" (addr : Socket.Address.Inet.t)]);
           addr)
         ~where_to_listen:(Tcp.Where_to_listen.of_port port)
         ()
@@ -72,7 +75,10 @@ end = struct
 
   let main =
     let%map_open.Command port =
-      flag "-port" (required int) ~doc:"INT port that the server should listen on"
+      flag
+        "-port"
+        (required int)
+        ~doc:"INT port that the server should listen on"
     in
     fun () -> serve port
   ;;
@@ -83,19 +89,24 @@ end
 module Client : sig
   val command : Command.t
 end = struct
-  (* In the client, rather than getting back a single response from the server, we get
-     back a pipe of responses. Here, we iterate over the pipe to print out every new
-     update we get from the server. *)
+  (* In the client, rather than getting back a single response from the
+     server, we get back a pipe of responses. Here, we iterate over the pipe
+     to print out every new update we get from the server. *)
   let request_heartbeats server_addr ~frequency_of_heartbeats =
     Rpc.Connection.with_client
       (Tcp.Where_to_connect.of_host_and_port server_addr)
       (fun connection ->
-         let%bind.Deferred pipe_reader, _metadata =
-           Rpc.Pipe_rpc.dispatch_exn Protocol.rpc connection { frequency_of_heartbeats }
-         in
-         Pipe.iter_without_pushback pipe_reader ~f:(fun () ->
-           Core.print_s
-             [%message "Received heartbeat" ~now:(Time_ns_unix.now () : Time_ns_unix.t)]))
+        let%bind.Deferred pipe_reader, _metadata =
+          Rpc.Pipe_rpc.dispatch_exn
+            Protocol.rpc
+            connection
+            { frequency_of_heartbeats }
+        in
+        Pipe.iter_without_pushback pipe_reader ~f:(fun () ->
+            Core.print_s
+              [%message
+                "Received heartbeat"
+                  ~now:(Time_ns_unix.now () : Time_ns_unix.t)]))
     >>| Result.ok_exn
   ;;
 

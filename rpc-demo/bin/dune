@@ -2,6 +2,4 @@
 
 (executables
  (names main)
- (libraries
-  core_unix.command_unix
-  rpc_demo_lib))
+ (libraries core_unix.command_unix rpc_demo_lib))

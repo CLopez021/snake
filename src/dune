@@ -1,23 +1,15 @@
 ;; -*- mode: scheme; -*-
 
 (library
-  (name snake_lib)
-  (libraries
-   async
-   core
-   graphics
-   )
-  (inline_tests)
-  (preprocess (pps ppx_jane)))
+ (name snake_lib)
+ (libraries async core graphics core_unix.command_unix)
+ (inline_tests)
+ (preprocess
+  (pps ppx_jane)))
 
 (env
  (dev
-  (flags (:standard
-          -w -20
-          -w -27
-          -w -32
-          -w -34
-          -w -37
-          -w -39)))
+  (flags
+   (:standard -w -20 -w -27 -w -32 -w -34 -w -37 -w -39)))
  (release
   (flags (:standard))))

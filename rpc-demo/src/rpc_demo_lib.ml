@@ -1,5 +1,5 @@
 open! Core
-open  Async
+open Async
 
 let command =
   Command.group

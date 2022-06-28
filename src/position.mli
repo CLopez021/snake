@@ -14,9 +14,10 @@ val to_string : t -> string
 (** [list_to_string] returns "[ col1, row1; col2, row2; ... ]" *)
 val list_to_string : t list -> string
 
-(** [of_col_major_coord] takes a single (col, row) coordinate and returns a [t] *)
+(** [of_col_major_coord] takes a single (col, row) coordinate and returns a
+    [t] *)
 val of_col_major_coord : int * int -> t
 
-(** [of_col_major_coords] takes a list of (col, row) coordinates and returns a list of
-    [t]s *)
+(** [of_col_major_coords] takes a list of (col, row) coordinates and returns
+    a list of [t]s *)
 val of_col_major_coords : (int * int) list -> t list
