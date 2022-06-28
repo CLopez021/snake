@@ -17,12 +17,12 @@ type t = One_score.t list [@@deriving sexp]
 let file_path = "/home/ubuntu/snake_scores.sexp"
 let load () : t Deferred.t = Reader.load_sexp_exn file_path t_of_sexp
 
-let update ~player_name ~score ~player_name2 ~score2 () =
+let update ~player1_name ~score ~player2_name ~score2 () =
   let%bind t = load () in
   let temp =
     t
-    @ [ { num_score = score; user = player_name }
-      ; { num_score = score2; user = player_name2 }
+    @ [ { num_score = score; user = player1_name }
+      ; { num_score = score2; user = player2_name }
       ]
   in
   let%bind () = Writer.save_sexp file_path (sexp_of_t temp) in
@@ -46,11 +46,11 @@ let to_table t ~n =
   leaderboard_string
 ;;
 
-let leaderboard_creation game ~n =
+let leaderboard_creation game ~n ~player1_name ~player2_name=
   let score, score2 = Game.score game in
   (*let player_name, player2_name = Game.player_name game in*)
   let%bind t =
-    update ~player_name:"Cristian" ~score ~player_name2:"Cristia" ~score2 ()
+    update ~player1_name ~score ~player2_name ~score2 ()
   in
   let leaderboard_table_string = to_table t ~n in
   return leaderboard_table_string

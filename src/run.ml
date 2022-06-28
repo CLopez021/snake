@@ -5,7 +5,7 @@ open! Map
 (* This is the core logic that actually runs the game. We have implemented
    enough of this for you to get started, but feel free to read this file as
    a reference because you'll end up modifying it eventually. *)
-let read_keys =
+let read_keys () =
   let temp = Ivar.read (Ivar.create ()) in
   let pipe_reader, pipe_writer = Pipe.create () in
   let time = Core_private.Span_float.create ?ms:(Some 1) () in
@@ -16,7 +16,7 @@ let read_keys =
   pipe_reader
 ;;
 
-let handle_steps (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name =
+let handle_steps (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name ~n=
   let time = Core_private.Span_float.create ?ms:(Some 100) () in
   Async_unix.every ?stop:game_over time (fun () ->
       Game.step game;
@@ -24,21 +24,21 @@ let handle_steps (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name =
       match Game.game_state game with
       | Game_over _ | Win ->
         Ivar.fill ivar ();
-        don't_wait_for(let%bind leaderboard = Leaderboard.leaderboard_creation game ~n:10 in
+        don't_wait_for(let%bind leaderboard = Leaderboard.leaderboard_creation game ~n ~player1_name ~player2_name in
         return (print_endline leaderboard))
       | In_progress -> ())
 ;;
 
-let handle_keys (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name =
+let handle_keys (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name ~n=
 
-  let pipe_reader = read_keys in
+  let pipe_reader = read_keys () in
   don't_wait_for (Pipe.iter_without_pushback pipe_reader ~f:(fun key ->
       match key with
       | 'r' ->
         let new_ivar = Ivar.create () in
         let new_game_over = Ivar.read new_ivar in
         Game.handle_key game key;
-        handle_steps game ~game_over:(Some new_game_over) ~ivar:new_ivar ~player1_name:player1_name ~player2_name:player2_name;
+        handle_steps game ~game_over:(Some new_game_over) ~ivar:new_ivar ~player1_name ~player2_name ~n;
         
       | _ ->
         Game.handle_key game key;
@@ -46,13 +46,13 @@ let handle_keys (game : Game.t) ~game_over ~ivar ~player1_name ~player2_name =
       ))
 ;;
 
-let run ~player1_name ~player2_name =
+let run ~n ~player1_name ~player2_name =
   let game = Snake_graphics.init_exn () in
   Snake_graphics.render game;
   let ivar = Ivar.create () in
   let game_over = Ivar.read ivar in
-  handle_steps game ~game_over:(Some game_over) ~ivar ~player1_name: player1_name ~player2_name: player2_name;
-  handle_keys game ~game_over:(Some game_over) ~ivar ~player1_name:player1_name ~player2_name:player2_name
+  handle_steps game ~game_over:(Some game_over) ~ivar ~player1_name ~player2_name ~n;
+  handle_keys game ~game_over:(Some game_over) ~ivar ~player1_name ~player2_name ~n
 ;;
 
 let command =
@@ -78,6 +78,7 @@ let command =
          You can check out
          https://ocaml.org/p/core/v0.15.0/doc/Core/Command/Flag/index.html
          for documentation on other bells and whistles that are available. *)
+      and n = flag "-n" (required int) ~doc:"INT, top 'n' ammount of scores on leaderboard"
       and player1_name = flag "-player1" (required string) ~doc:"STRING e.g., Brett"
       and player2_name = flag "-player2" (required string) ~doc: "STRING e.g., Brett" in
       (* Once you get down here, [Command.Param] is no longer in scope
@@ -85,7 +86,7 @@ let command =
          params have been neatly parsed. We can use them below like ordinary
          OCaml values. *)
       fun () ->
-      let()= run ~player1_name ~player2_name in
+      let()= run ~n ~player1_name ~player2_name in
       Deferred.never ()]
 ;;
 (*let () = Command_unix.run command*)

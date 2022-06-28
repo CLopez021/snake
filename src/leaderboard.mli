@@ -14,9 +14,9 @@ type t [@@deriving sexp_of]
     score, and then returns the newly updated state of the
     leaderboard/scores. *)
 val update
-  :  player_name:string
+  :  player1_name:string
   -> score:int
-  -> player_name2:string
+  -> player2_name:string
   -> score2:int
   -> unit
   -> t Deferred.t
@@ -25,4 +25,4 @@ val update
     string. *)
 val to_table : t -> n:int -> string
 
-val leaderboard_creation : Game.t -> n:int -> string Deferred.t
+val leaderboard_creation : Game.t -> n:int -> player1_name:string -> player2_name:string ->string Deferred.t
