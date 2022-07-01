@@ -4,7 +4,7 @@ type t =
   { col : int
   ; row : int
   }
-[@@deriving compare, equal, sexp_of]
+[@@deriving compare, equal, sexp_of,bin_io]
 
 let to_string { col; row } = Core.sprintf "%d, %d" col row
 

@@ -9,10 +9,10 @@ module One_score = struct
     { num_score : int
     ; user : string
     }
-  [@@deriving sexp]
+  [@@deriving sexp,bin_io]
 end
 
-type t = One_score.t list [@@deriving sexp]
+type t = One_score.t list [@@deriving sexp,bin_io]
 
 let file_path = "/home/ubuntu/snake_scores.sexp"
 let load () : t Deferred.t = Reader.load_sexp_exn file_path t_of_sexp

@@ -2,7 +2,7 @@ open! Core
 
 (** A [t] represents the entire game state, including the current snake, apple,
     and game state. *)
-type t [@@deriving sexp_of]
+type t [@@deriving sexp_of, bin_io]
 
 (** Used for pretty-printing game contents for tests. *)
 val to_string  : t -> string

@@ -6,7 +6,7 @@ type t =
   { col : int
   ; row : int
   }
-[@@deriving compare, equal, sexp_of]
+[@@deriving compare, equal, sexp_of,bin_io]
 
 (** [to_string] returns "col, row" *)
 val to_string : t -> string

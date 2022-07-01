@@ -37,9 +37,7 @@ let init_exn () =
        " %dx%d"
        (play_area_height + header_height)
        play_area_width);
-  let height = play_area_height / block_size in
-  let width = play_area_width / block_size in
-  Game.create ~height ~width ~initial_snake_length:3
+  ()
 ;;
 
 let draw_block { Position.row; col } ~color =

@@ -13,7 +13,7 @@ type t =
        represents the tip of the tail) *)
     mutable tail : Position.t list
   }
-[@@deriving sexp_of, fields]
+[@@deriving sexp_of, fields,bin_io]
 
 let to_string ?(indent = 0) { direction; extensions_remaining; head; tail } =
   Core.sprintf

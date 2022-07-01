@@ -4,14 +4,14 @@ module Color = struct
   type t =
     | Red
     | Gold
-  [@@deriving sexp_of, enumerate, compare]
+  [@@deriving sexp_of, enumerate, compare,bin_io]
 end
 
 type t =
   { location : Position.t
   ; color : Color.t
   }
-[@@deriving sexp_of]
+[@@deriving sexp_of,bin_io]
 
 let location t = t.location
 let color t = t.color

@@ -6,7 +6,7 @@ open Async
 
 (** The type [t] here is abstract, but it should be thought of as holding the
     state about the players and their scores on the leaderboard. *)
-type t [@@deriving sexp_of]
+type t [@@deriving sexp_of,bin_io]
 
 (** The [update] function accepts the name of a player (optionally) and the
     score. It should be called after each game ends to update the scores

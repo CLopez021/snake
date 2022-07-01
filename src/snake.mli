@@ -5,7 +5,7 @@ open! Core
     Snake is a mutable type, so when we make changes to it, the functions
     return unit. They affect the internal state of the snake, rather than
     making a new snake. *)
-type t [@@deriving sexp_of]
+type t [@@deriving sexp_of,bin_io]
 
 (** Used for pretty-printing snake contents for tests. *)
 val to_string : ?indent:int -> t -> string

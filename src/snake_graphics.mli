@@ -6,7 +6,7 @@ open! Core
     things fancier! *)
 
 (** [init_exn] fails if called twice. *)
-val init_exn : unit -> Game.t
+val init_exn : unit -> unit
 
 (** [render] renders the entire playing area along with snakes and apples. *)
 val render : Game.t -> unit

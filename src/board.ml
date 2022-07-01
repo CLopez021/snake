@@ -4,7 +4,7 @@ type t =
   { height : int
   ; width : int
   }
-[@@deriving sexp_of, fields]
+[@@deriving sexp_of, fields,bin_io]
 
 let create ~height ~width = { height; width }
 let create_unlabeled height width = { height; width }

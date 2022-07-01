@@ -2,7 +2,7 @@ open! Core
 
 (** A [Board.t] contains metadata about the size of the playing area of the
     game. *)
-type t [@@deriving sexp_of]
+type t [@@deriving sexp_of,bin_io]
 
 val create : height:int -> width:int -> t
 val create_unlabeled : int -> int -> t

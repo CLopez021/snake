@@ -10,7 +10,7 @@ type t =
   | Right2
   | Down2
   | Restart
-[@@deriving compare, equal, sexp_of]
+[@@deriving compare, equal, sexp_of,bin_io]
 
 (** [next_position] takes a direction and a starting position and returns the
     next position after taking one step in the specified direction. *)

@@ -1,4 +1,4 @@
-open Core
+ open Core
 open Async
 
 (* [Protocol] defines the communication between the server and the client. *)

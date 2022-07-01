@@ -4,7 +4,7 @@ type t =
   | In_progress
   | Game_over of string
   | Win
-[@@deriving sexp_of, compare]
+[@@deriving sexp_of, compare,bin_io]
 
 let to_string t =
   match t with

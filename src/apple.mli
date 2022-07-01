@@ -4,10 +4,10 @@ module Color : sig
   type t =
     | Red
     | Gold
-  [@@deriving sexp_of, enumerate, compare]
+  [@@deriving sexp_of, enumerate, compare,bin_io]
 end
 
-type t [@@deriving sexp_of]
+type t [@@deriving sexp_of,bin_io]
 
 (** [create] takes in a [Board.t] representing the area in which an apple can
     be generated, as well as a [Snake.t], and creates an [Apple.t] such that

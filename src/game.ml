@@ -9,7 +9,7 @@ type t =
   ; mutable score : int
   ; mutable score2 : int
   }
-[@@deriving sexp_of]
+[@@deriving sexp_of, bin_io]
 
 let to_string
     { snake; snake2 = _; game_state; apple; board; score = _; score2 }

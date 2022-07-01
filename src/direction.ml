@@ -10,7 +10,7 @@ type t =
   | Right2
   | Down2
   | Restart
-[@@deriving compare, equal, sexp_of]
+[@@deriving compare, equal, sexp_of,bin_io]
 
 let next_position t { Position.row; col } : Position.t =
   match t with
